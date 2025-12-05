@@ -1,0 +1,5 @@
+# Dependencies for CLI script (wiz_control.py)
+# The CLI script uses only Python standard library (socket, json)
+
+# Dependencies for web server (web_server.py)
+Flask==3.0.0

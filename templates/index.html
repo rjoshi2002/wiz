@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiz Light Controller</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .light-count {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .power-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-on {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-on:hover {
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-off {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        .btn-off:hover {
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn-preset {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px;
+            margin: 5px 0;
+        }
+
+        .btn-preset:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .slider-container {
+            margin: 25px 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        .color-input {
+            width: 100%;
+            height: 60px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .temp-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .online {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .offline {
+            color: #f44336;
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #f44336;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .power-controls {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 15px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Wiz Light Controller</h1>
+            <div class="light-count">Controlling {{ num_lights }} lights</div>
+        </div>
+
+        <div class="card">
+            <h2>Power</h2>
+            <div class="power-controls">
+                <button class="btn btn-on" onclick="turnOn()">Turn On</button>
+                <button class="btn btn-off" onclick="turnOff()">Turn Off</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Brightness</h2>
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Brightness</span>
+                    <span id="brightness-value">100%</span>
+                </div>
+                <input type="range" min="1" max="100" value="100" class="slider" id="brightness-slider">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Color</h2>
+            <input type="color" id="color-picker" class="color-input" value="#ffffff">
+            <div class="preset-grid">
+                <button class="btn btn-preset" onclick="setPresetColor(255, 0, 0)">Red</button>
+                <button class="btn btn-preset" onclick="setPresetColor(0, 255, 0)">Green</button>
+                <button class="btn btn-preset" onclick="setPresetColor(0, 0, 255)">Blue</button>
+                <button class="btn btn-preset" onclick="setPresetColor(255, 255, 0)">Yellow</button>
+                <button class="btn btn-preset" onclick="setPresetColor(128, 0, 128)">Purple</button>
+                <button class="btn btn-preset" onclick="setPresetColor(0, 255, 255)">Cyan</button>
+                <button class="btn btn-preset" onclick="setPresetColor(255, 165, 0)">Orange</button>
+                <button class="btn btn-preset" onclick="setPresetColor(255, 192, 203)">Pink</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Color Temperature</h2>
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Temperature</span>
+                    <span id="temp-value">4000K</span>
+                </div>
+                <input type="range" min="2200" max="6500" value="4000" step="100" class="slider" id="temp-slider">
+            </div>
+            <div class="temp-grid">
+                <button class="btn btn-preset" onclick="setTemperature(2200)">Candle (2200K)</button>
+                <button class="btn btn-preset" onclick="setTemperature(2700)">Warm (2700K)</button>
+                <button class="btn btn-preset" onclick="setTemperature(4000)">Neutral (4000K)</button>
+                <button class="btn btn-preset" onclick="setTemperature(6500)">Daylight (6500K)</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Status</h2>
+            <button class="btn btn-preset" onclick="getStatus()" style="width: 100%;">Refresh Status</button>
+            <div class="status" id="status-container">
+                <div style="text-align: center; color: #999;">Click refresh to check light status</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let brightnessValue = 100;
+        let currentColor = { r: 255, g: 255, b: 255 };
+
+        // Brightness slider
+        const brightnessSlider = document.getElementById('brightness-slider');
+        const brightnessValueDisplay = document.getElementById('brightness-value');
+
+        brightnessSlider.addEventListener('input', function() {
+            brightnessValue = this.value;
+            brightnessValueDisplay.textContent = brightnessValue + '%';
+        });
+
+        brightnessSlider.addEventListener('change', function() {
+            setBrightness(brightnessValue);
+        });
+
+        // Temperature slider
+        const tempSlider = document.getElementById('temp-slider');
+        const tempValueDisplay = document.getElementById('temp-value');
+
+        tempSlider.addEventListener('input', function() {
+            tempValueDisplay.textContent = this.value + 'K';
+        });
+
+        tempSlider.addEventListener('change', function() {
+            setTemperature(parseInt(this.value));
+        });
+
+        // Color picker
+        const colorPicker = document.getElementById('color-picker');
+        colorPicker.addEventListener('change', function() {
+            const hex = this.value;
+            const r = parseInt(hex.substr(1, 2), 16);
+            const g = parseInt(hex.substr(3, 2), 16);
+            const b = parseInt(hex.substr(5, 2), 16);
+            setColor(r, g, b);
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        async function turnOn() {
+            try {
+                const response = await fetch('/api/lights/on', { method: 'POST' });
+                const data = await response.json();
+                showNotification('Lights turned on!', 'success');
+            } catch (error) {
+                showNotification('Failed to turn on lights', 'error');
+            }
+        }
+
+        async function turnOff() {
+            try {
+                const response = await fetch('/api/lights/off', { method: 'POST' });
+                const data = await response.json();
+                showNotification('Lights turned off!', 'success');
+            } catch (error) {
+                showNotification('Failed to turn off lights', 'error');
+            }
+        }
+
+        async function setColor(r, g, b) {
+            try {
+                const response = await fetch('/api/lights/color', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ r, g, b, brightness: brightnessValue })
+                });
+                const data = await response.json();
+                currentColor = { r, g, b };
+                showNotification(`Color set to RGB(${r}, ${g}, ${b})`, 'success');
+            } catch (error) {
+                showNotification('Failed to set color', 'error');
+            }
+        }
+
+        async function setPresetColor(r, g, b) {
+            // Update color picker to match
+            const hex = '#' + [r, g, b].map(x => {
+                const h = x.toString(16);
+                return h.length === 1 ? '0' + h : h;
+            }).join('');
+            colorPicker.value = hex;
+            await setColor(r, g, b);
+        }
+
+        async function setTemperature(kelvin) {
+            try {
+                const response = await fetch('/api/lights/temperature', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ kelvin, brightness: brightnessValue })
+                });
+                const data = await response.json();
+                tempSlider.value = kelvin;
+                tempValueDisplay.textContent = kelvin + 'K';
+                showNotification(`Temperature set to ${kelvin}K`, 'success');
+            } catch (error) {
+                showNotification('Failed to set temperature', 'error');
+            }
+        }
+
+        async function setBrightness(brightness) {
+            try {
+                const response = await fetch('/api/lights/brightness', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ brightness: parseInt(brightness) })
+                });
+                const data = await response.json();
+                showNotification(`Brightness set to ${brightness}%`, 'success');
+            } catch (error) {
+                showNotification('Failed to set brightness', 'error');
+            }
+        }
+
+        async function getStatus() {
+            try {
+                const response = await fetch('/api/lights/status');
+                const data = await response.json();
+
+                const statusContainer = document.getElementById('status-container');
+                statusContainer.innerHTML = data.lights.map(light => `
+                    <div class="status-item">
+                        <span>${light.ip}</span>
+                        <span class="${light.online ? 'online' : 'offline'}">
+                            ${light.online ? (light.state ? 'ON' : 'OFF') : 'OFFLINE'}
+                            ${light.online && light.brightness ? ` (${light.brightness}%)` : ''}
+                        </span>
+                    </div>
+                `).join('');
+
+                showNotification('Status updated', 'success');
+            } catch (error) {
+                showNotification('Failed to get status', 'error');
+            }
+        }
+
+        // Auto-refresh status on page load
+        window.addEventListener('load', () => {
+            setTimeout(getStatus, 500);
+        });
+    </script>
+</body>
+</html>
