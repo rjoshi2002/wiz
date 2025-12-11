@@ -1,0 +1,14 @@
+IDF_VERSION: 5.4.1; idf version number: 5.4.1
+Sequence of SDKCONFIG files: sdkconfig.defaults
+CMake Warning at /Users/rohanjoshi/esp-idf/tools/cmake/project.cmake:566 (message):
+  enabled ccache in build but ccache program not found
+Call Stack (most recent call first):
+  CMakeLists.txt:51 (project)
+
+
+warning: default on the choice symbol SEC_CERT_DAC_PROVIDER (defined at /Users/rohanjoshi/esp-matter/connectedhomeip/connectedhomeip/config/esp32/components/chip/Kconfig:833, /Users/rohanjoshi/esp-matter/components/esp_matter/Kconfig:48) will have no effect, as defaults do not affect choice symbols
+warning: the choice symbol SEC_CERT_DAC_PROVIDER (defined at /Users/rohanjoshi/esp-matter/connectedhomeip/connectedhomeip/config/esp32/components/chip/Kconfig:833, /Users/rohanjoshi/esp-matter/components/esp_matter/Kconfig:48) is defined with a prompt outside the choice
+info: INFO: Symbol SEC_CERT_DAC_PROVIDER defined in multiple locations (see below). Please check if this is a correct behavior or a random name match:
+    /Users/rohanjoshi/esp-matter/components/esp_matter/Kconfig:48
+    /Users/rohanjoshi/esp-matter/connectedhomeip/connectedhomeip/config/esp32/components/chip/Kconfig:833
+ESP Insights Project commit: tv-1-gfc4b756
