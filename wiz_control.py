@@ -10,12 +10,12 @@ import time
 
 # Configuration - Add your light IP addresses here
 LIGHT_IPS = [
-    "172.18.53.231",  # Replace with your actual light IPs
-    "172.18.53.230",
-    "172.18.53.192",
-    "172.18.53.178",
-    "172.18.53.177",
-    "172.18.53.179",
+    "192.168.0.155",  # Replace with your actual light IPs
+    "192.168.0.139",
+    "192.168.0.196",
+    "192.168.0.179",
+    "192.168.0.116",
+    "192.168.0.83",
     # Add more IPs as needed
 ]
 
